@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/aldahick/smozkognite.git"
   },
+  "dependencies": {
+    "@google-cloud/storage": "^6.9.4",
+    "dotenv": "^16.0.3"
+  },
   "devDependencies": {
     "@types/node": "^18.14.4",
     "tsc-watch": "^6.0.0",

@@ -3,12 +3,14 @@ import { config } from "./config";
 import { httpUtil } from "./http";
 import { getTranscription } from "./routes/get-transcription";
 import { startTranscription } from "./routes/start-transcription";
-import { getUploadUrl } from "./routes/upload-url";
-import { RequestHandler } from "./types";
+import { getUploadUrl } from "./routes/get-upload-url";
+import { RequestHandler } from "./types/http";
 
+// Very basic routing implementation - replace with appropriate framework later (soon)
 const main = () => {
   const httpServer = http.createServer((req, res) => {
     let handler: RequestHandler;
+    res.setHeader('Access-Control-Allow-Origin', config.webUrl);
     if (req.url === "/upload-url" && req.method === "GET") {
       handler = getUploadUrl;
     } else if (req.url === "/transcription" && req.method === "POST") {
