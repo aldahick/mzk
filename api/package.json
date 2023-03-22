@@ -1,0 +1,20 @@
+{
+  "name": "@smozkognite/api",
+  "version": "0.1.0",
+  "author": "Alex Hicks <alex@alexhicks.net>",
+  "license": "MIT",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start:dev": "tsc-watch --onSuccess \"node dist/main\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aldahick/smozkognite.git"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.4",
+    "tsc-watch": "^6.0.0",
+    "typescript": "^4.9.5"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@smozkognite/web",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "4.9.5"
+  }
+}
