@@ -5,15 +5,15 @@ import { Transcription } from "../types/transcription";
 
 export interface StartTranscriptionRequest {
   label: string;
-  url: string;
+  transcriptionId: string;
 }
-export type StartTranscriptionResponse = Omit<Transcription, 'audioUrl'>;
+export type StartTranscriptionResponse = Transcription;
 
 export const startTranscription: RequestHandler = async (req, res) => {
-  const transcriptionService = TranscriptionService.make();
+  const transcriptionService = new TranscriptionService();
 
-  const { label, url: audioUrl } = await httpUtil.getJsonBody<StartTranscriptionRequest>(req);
-  let transcription = await transcriptionService.create(label, audioUrl);
+  const { label, transcriptionId } = await httpUtil.getJsonBody<StartTranscriptionRequest>(req);
+  const transcription = await transcriptionService.create(transcriptionId, label);
   await transcriptionService.start(transcription);
   await httpUtil.writeRes(res, transcription);
 };

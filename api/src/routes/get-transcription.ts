@@ -7,7 +7,7 @@ export const getTranscription: RequestHandler = async (req, res) => {
   if (!id) {
     throw new Error('Missing required path parameter "id"');
   }
-  const transcriptionService = TranscriptionService.make();
+  const transcriptionService = new TranscriptionService();
   const transcription = await transcriptionService.get(id);
   await httpUtil.writeRes(res, transcription);
 }

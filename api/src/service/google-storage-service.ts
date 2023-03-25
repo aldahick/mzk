@@ -9,50 +9,55 @@ const defaultBucket = config.google.bucketName;
 export class GoogleStorageService {
   readonly client = new Storage({
     projectId: config.google.projectId,
-    keyFilename: config.google.keyFilename
+    keyFilename: config.google.credentialsPath
   });
 
+  async exists(path: string): Promise<boolean> {
+    const bucket = this.getDefaultBucket();
+    const [exists] = await bucket.file(path).exists();
+    return exists;
+  }
+
   async write(path: string, body: string | Buffer): Promise<void> {
-    const bucket = await this.getDefaultBucket();
+    const bucket = this.getDefaultBucket();
     await bucket.file(path).save(body);
   }
 
   async getContents(path: string): Promise<Buffer> {
-    const bucket = await this.getDefaultBucket();
+    const bucket = this.getDefaultBucket();
     const [contents] = await bucket.file(path).download();
     return contents;
   }
 
-  async getUploadUrl(path: string, expires: Date): Promise<string> {
-    const bucket = await this.getDefaultBucket();
-    const res = await bucket.file(path).getSignedUrl({
-      action: 'write',
-      expires,
-      contentType: 'audio/mpeg'
-    });
+  async getContentsJson<T>(path: string): Promise<T> {
+    const contents = await this.getContents(path);
+    return JSON.parse(contents.toString('utf8'));
+  }
+
+  async getSignedUrl(path: string, options: {
+    expires: Date;
+    action: 'write' | 'read';
+    contentType?: string
+  }): Promise<string> {
+    const bucket = this.getDefaultBucket();
+    const res = await bucket.file(path).getSignedUrl(options);
     const [uploadUrl] = res;
     return uploadUrl;
   }
-  
+
   /**
    * Returns the single bucket used for user audio uploads
    * Creates the bucket if it doesn't exist
   */
- async getDefaultBucket(): Promise<Bucket> {
-   const bucket = this.client.bucket(defaultBucket);
-   await bucket.setCorsConfiguration([{
-     origin: [config.webUrl],
-     responseHeader: ["Content-Type", "Access-Control-Allow-Origin", "X-Goog-Resumable"],
-     method: ["GET", "HEAD", "DELETE", "POST", "PUT", "OPTIONS"],
-     maxAgeSeconds: 3600
-    }]);
-    return bucket;
+  getDefaultBucket(): Bucket {
+    return this.client.bucket(defaultBucket);
   }
 
   /**
    * Strips everything but the object path from a Storage URL
    */
   makeKey(url: string): string {
+    console.log('making key', url);
     const { pathname } = new URL(url);
     const [bucket, ...keyParts] = pathname.replace(/^\//, '').split('/');
     console.log({ pathname, bucket, keyParts})

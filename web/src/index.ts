@@ -23,15 +23,15 @@ class TranscriptionStatus extends HTMLElement {
     this.statusText = document.createElement('p');
     this.appendChild(this.statusText);
   }
-  
+
   set transcription({ id, label, status }: Transcription) {
     this.transcriptionId = id;
     this.intervalId = setInterval(() =>
-      this.fetchAndDisplay().catch(() => this.setStatusText('errored')),
+      this.fetchAndDisplay().catch(() => this.updateStatusText('errored')),
       TranscriptionStatus.REFRESH_INTERVAL_MS
     );
     this.titleText.innerText = 'Transcription status: ' + label;
-    this.setStatusText(status);
+    this.updateStatusText(status);
   }
 
   private async fetchAndDisplay(): Promise<void> {
@@ -39,8 +39,11 @@ class TranscriptionStatus extends HTMLElement {
       return clearInterval(this.intervalId);
     }
     const api = new Api();
-    const { status } = await api.fetchTranscription(this.transcriptionId);
-    const final = this.setStatusText(status);
+    const { status, midiUrl } = await api.fetchTranscription(this.transcriptionId);
+    const final = this.updateStatusText(status);
+    if (midiUrl && status === 'success') {
+      this.addDownloadButton(midiUrl);
+    }
     // if this is a final state, don't fetch again
     if (final && !!this.intervalId) {
       clearInterval(this.intervalId);
@@ -50,7 +53,7 @@ class TranscriptionStatus extends HTMLElement {
   /**
    * @returns true if this is a final state
    */
-  private setStatusText(status: string): boolean {
+  private updateStatusText(status: string): boolean {
     let color = 'black';
     let final = false;
     if (status === 'success') {
@@ -68,6 +71,17 @@ class TranscriptionStatus extends HTMLElement {
     this.statusText.style.fontWeight = final ? 'bold' : 'normal';
     this.statusText.innerText = status;
     return final;
+  }
+
+  private addDownloadButton(url: string): void {
+    const link = document.createElement('a');
+    link.setAttribute('download', '');
+    link.href = url;
+    this.appendChild(link);
+
+    const button = document.createElement('button');
+    button.textContent = 'Download transcription';
+    link.appendChild(button);
   }
 }
 customElements.define('transcription-status', TranscriptionStatus);
@@ -101,17 +115,17 @@ class AudioUploadForm extends HTMLElement {
       return;
     }
     const api = new Api();
-    const uploadUrl = await api.fetchUploadUrl();
+    const { uploadUrl, transcriptionId } = await api.fetchUploadUrl();
     await fetch(uploadUrl, {
       method: 'PUT',
-      body: file.stream(),
+      body: await file.arrayBuffer(),
       headers: {
         "Content-Type": file.type
       }
     });
     this.fileInput.value = '';
     this.setMessage(`Successfully uploaded ${file.name}, starting transcription...`, 'green');
-    const transcription = await api.startTranscription({ label: file.name, url: uploadUrl });
+    const transcription = await api.startTranscription({ label: file.name, transcriptionId });
     // const transcriptionStatus = document.createElement('transcription-status') as TranscriptionStatus;
     const transcriptionStatus = new TranscriptionStatus();
     transcriptionStatus.transcription = transcription;

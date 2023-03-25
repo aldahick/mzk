@@ -13,6 +13,7 @@
     "url": "git+https://github.com/aldahick/smozkognite.git"
   },
   "dependencies": {
+    "@google-cloud/run": "^0.4.1",
     "@google-cloud/storage": "^6.9.4",
     "dotenv": "^16.0.3"
   },

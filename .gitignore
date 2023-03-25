@@ -3,3 +3,9 @@ dist
 
 .env
 google-cloud-key.json
+
+.terraform
+*.backup
+*.tfstate
+*.tfvars
+!devops/example.tfvars
