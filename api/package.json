@@ -1,5 +1,5 @@
 {
-  "name": "@smozkognite/api",
+  "name": "@mzk/api",
   "version": "0.1.0",
   "author": "Alex Hicks <alex@alexhicks.net>",
   "license": "MIT",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aldahick/smozkognite.git"
+    "url": "git+https://github.iu.edu/aldahick/mzk.git"
   },
   "dependencies": {
     "@google-cloud/run": "^0.4.1",

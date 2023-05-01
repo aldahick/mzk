@@ -1,4 +1,3 @@
-google_project_id = "12345678901"
+google_project_id = "12345678901" # CHANGE ME
 # See https://cloud.google.com/run/docs/locations
-# North Virginia
-google_region = "us-east4"
+google_region = "us-east4" # North Virginia

@@ -1,10 +1,14 @@
 {
-  "name": "@smozkognite/web",
+  "name": "@mzk/web",
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
     "serve": "serve -s dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.iu.edu/aldahick/mzk.git"
   },
   "devDependencies": {
     "serve": "^14.2.0",

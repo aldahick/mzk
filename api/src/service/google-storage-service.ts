@@ -3,9 +3,6 @@ import { config } from '../config';
 
 const defaultBucket = config.google.bucketName;
 
-/**
- * Wrapper for Google Cloud Storage
- */
 export class GoogleStorageService {
   readonly client = new Storage({
     projectId: config.google.projectId,
